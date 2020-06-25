@@ -9,19 +9,47 @@ import SwiftUI
 
 struct SandwichDetail: View {
     var sandwich: Sandwich
+    @State private var zoomed = false
     
     var body: some View {
-        Image(sandwich.imageName)
-            .resizable()
-            .aspectRatio(contentMode: /*@START_MENU_TOKEN@*/.fit/*@END_MENU_TOKEN@*/)
-            .navigationTitle(sandwich.name)
+        VStack {
+            Spacer(minLength: 0)
+            
+            Image(sandwich.imageName)
+                .resizable()
+                .aspectRatio(contentMode: zoomed ? .fill : .fit)
+                .onTapGesture{
+                    withAnimation {
+                        zoomed.toggle()
+                    }
+                }
+            
+            Spacer(minLength: 0)
+            
+            if sandwich.isSpicy && !zoomed {
+                HStack {
+                    Spacer()
+                    Label("Spicy", systemImage: "flame.fill")
+                    Spacer()
+                }
+                .padding(.all)
+                .font(Font.headline.smallCaps())
+                .background(Color.red)
+                .foregroundColor(.yellow)
+                .transition(.move(edge: .bottom))
+            }
+        }
+        .navigationTitle(sandwich.name)
+        .edgesIgnoringSafeArea(.bottom)
     }
 }
 
 struct SandwichDetail_Previews: PreviewProvider {
     static var previews: some View {
-        NavigationView {
-            SandwichDetail(sandwich: Sandwiches.testData[0])
+        Group {
+            NavigationView {
+                SandwichDetail(sandwich: Sandwiches.testData[1])
+            }
         }
     }
 }
